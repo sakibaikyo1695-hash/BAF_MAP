@@ -21,7 +21,6 @@
   --text-dim: #4a7a96;
   --glow: 0 0 12px rgba(0,212,255,0.4);
   --glow2: 0 0 12px rgba(0,255,157,0.4);
-  --scanline: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -56,25 +55,17 @@ body {
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 
-.tb-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+.tb-left { display: flex; align-items: center; gap: 16px; }
 
 .tb-emblem {
-  width: 36px;
-  height: 36px;
+  width: 36px; height: 36px;
   border: 2px solid var(--accent);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   font-size: 18px;
   box-shadow: var(--glow);
   animation: pulse-ring 3s infinite;
 }
-
 @keyframes pulse-ring {
   0%,100% { box-shadow: var(--glow); }
   50% { box-shadow: 0 0 20px rgba(0,212,255,0.7); }
@@ -82,191 +73,94 @@ body {
 
 .tb-title {
   font-family: 'Exo 2', sans-serif;
-  font-weight: 900;
-  font-size: 22px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
+  font-weight: 900; font-size: 22px;
+  letter-spacing: 4px; text-transform: uppercase;
   color: var(--accent);
   text-shadow: 0 0 10px rgba(0,212,255,0.5);
 }
 .tb-subtitle {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: var(--text-dim);
-  letter-spacing: 2px;
+  font-size: 11px; color: var(--text-dim); letter-spacing: 2px;
 }
 
-.tb-right {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
+.tb-right { display: flex; align-items: center; gap: 24px; }
 
-.tb-stat {
-  text-align: right;
-}
+.tb-stat { text-align: right; }
 .tb-stat-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  color: var(--text-dim);
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-size: 9px; color: var(--text-dim);
+  letter-spacing: 2px; text-transform: uppercase;
 }
 .tb-stat-val {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 14px;
-  color: var(--accent2);
-  text-shadow: var(--glow2);
+  font-size: 14px; color: var(--accent2); text-shadow: var(--glow2);
 }
 
 #clock {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 28px;
-  color: var(--accent);
-  text-shadow: var(--glow);
-  letter-spacing: 4px;
-  min-width: 140px;
-  text-align: center;
+  font-size: 28px; color: var(--accent);
+  text-shadow: var(--glow); letter-spacing: 4px;
+  min-width: 140px; text-align: center;
 }
 
 .credit-badge {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: var(--warn);
+  font-size: 10px; color: var(--warn);
   background: rgba(255,170,0,0.08);
   border: 1px solid rgba(255,170,0,0.3);
-  padding: 4px 10px;
-  border-radius: 2px;
-  letter-spacing: 1px;
+  padding: 4px 10px; border-radius: 2px; letter-spacing: 1px;
 }
 
 /* ─── MAIN LAYOUT ─── */
-#main {
-  flex: 1;
-  display: flex;
-  overflow: hidden;
-}
+#main { flex: 1; display: flex; overflow: hidden; }
 
-/* ─── MAP ─── */
+/* ─── MAP — 100% clean, zero overlays ─── */
 #map {
   flex: 1;
-  position: relative;
   border-right: 1px solid var(--border);
-}
-
-#map::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--scanline);
-  pointer-events: none;
-  z-index: 999;
-}
-
-/* Corner decorations on map */
-.map-corner {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  z-index: 1000;
-  pointer-events: none;
-}
-.map-corner.tl { top: 8px; left: 8px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
-.map-corner.tr { top: 8px; right: 8px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
-.map-corner.bl { bottom: 8px; left: 8px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
-.map-corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
-
-#coords-overlay {
-  position: absolute;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  background: rgba(5,10,15,0.85);
-  border: 1px solid var(--border);
-  padding: 6px 18px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 13px;
-  color: var(--accent2);
-  letter-spacing: 2px;
-  pointer-events: none;
-  border-radius: 2px;
-  text-shadow: var(--glow2);
-  min-width: 300px;
-  text-align: center;
 }
 
 /* ─── SIDEBAR ─── */
 #sidebar {
-  width: 380px;
-  flex-shrink: 0;
+  width: 380px; flex-shrink: 0;
   background: var(--panel);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  display: flex; flex-direction: column; overflow: hidden;
 }
 
 .sidebar-scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--panel);
+  flex: 1; overflow-y: auto; padding: 12px;
+  scrollbar-width: thin; scrollbar-color: var(--border) var(--panel);
 }
-
 .sidebar-scroll::-webkit-scrollbar { width: 4px; }
 .sidebar-scroll::-webkit-scrollbar-track { background: var(--panel); }
 .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--border); }
 
-/* ─── SECTION PANELS ─── */
+/* ─── PANELS ─── */
 .ops-panel {
   background: var(--panel2);
   border: 1px solid var(--border);
-  border-radius: 3px;
-  margin-bottom: 10px;
-  overflow: hidden;
+  border-radius: 3px; margin-bottom: 10px; overflow: hidden;
 }
-
 .ops-panel-header {
   background: rgba(13,79,110,0.4);
   border-bottom: 1px solid var(--border);
-  padding: 7px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  padding: 7px 12px; display: flex; align-items: center; gap: 8px;
 }
-
 .ops-panel-header .icon { font-size: 13px; }
-
 .ops-panel-title {
   font-family: 'Exo 2', sans-serif;
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--accent);
-  text-shadow: 0 0 6px rgba(0,212,255,0.4);
+  font-weight: 700; font-size: 11px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); text-shadow: 0 0 6px rgba(0,212,255,0.4);
 }
-
-.ops-panel-body {
-  padding: 10px;
-}
+.ops-panel-body { padding: 10px; }
 
 /* ─── INPUTS ─── */
-.field-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
+.field-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .field-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: var(--text-dim);
-  letter-spacing: 2px;
-  min-width: 28px;
-  text-transform: uppercase;
+  font-size: 11px; color: var(--text-dim);
+  letter-spacing: 2px; min-width: 28px; text-transform: uppercase;
 }
 
 input[type=text], input[type=number], textarea {
@@ -274,331 +168,111 @@ input[type=text], input[type=number], textarea {
   border: 1px solid var(--border);
   color: var(--accent2);
   font-family: 'Share Tech Mono', monospace;
-  font-size: 13px;
-  padding: 7px 10px;
-  border-radius: 2px;
-  outline: none;
-  width: 100%;
+  font-size: 13px; padding: 7px 10px;
+  border-radius: 2px; outline: none; width: 100%;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-
 input[type=text]:focus, input[type=number]:focus, textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px rgba(0,212,255,0.2);
 }
-
-input::placeholder, textarea::placeholder {
-  color: var(--text-dim);
-  opacity: 0.6;
-}
-
-textarea {
-  resize: vertical;
-  min-height: 60px;
-}
+input::placeholder, textarea::placeholder { color: var(--text-dim); opacity: 0.6; }
+textarea { resize: vertical; min-height: 60px; }
 
 /* ─── BUTTONS ─── */
-.btn-grid {
-  display: grid;
-  gap: 6px;
-}
+.btn-grid { display: grid; gap: 6px; }
 .btn-grid-2 { grid-template-columns: 1fr 1fr; }
 .btn-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
 
 .btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
   padding: 9px 12px;
   font-family: 'Exo 2', sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  border: 1px solid;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-decoration: none;
+  font-weight: 700; font-size: 12px;
+  letter-spacing: 2px; text-transform: uppercase;
+  border: 1px solid; border-radius: 2px;
+  cursor: pointer; transition: all 0.15s; text-decoration: none;
 }
-
-.btn-primary {
-  background: rgba(0,212,255,0.1);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.btn-primary:hover {
-  background: rgba(0,212,255,0.22);
-  box-shadow: var(--glow);
-}
-
-.btn-success {
-  background: rgba(0,255,157,0.1);
-  border-color: var(--accent2);
-  color: var(--accent2);
-}
-.btn-success:hover {
-  background: rgba(0,255,157,0.2);
-  box-shadow: var(--glow2);
-}
-
-.btn-danger {
-  background: rgba(255,59,59,0.1);
-  border-color: var(--danger);
-  color: var(--danger);
-}
-.btn-danger:hover {
-  background: rgba(255,59,59,0.2);
-  box-shadow: 0 0 10px rgba(255,59,59,0.3);
-}
-
-.btn-muted {
-  background: rgba(74,122,150,0.1);
-  border-color: var(--text-dim);
-  color: var(--text-dim);
-}
-.btn-muted:hover {
-  background: rgba(74,122,150,0.2);
-  color: var(--text);
-}
-
-.btn-warn {
-  background: rgba(255,170,0,0.1);
-  border-color: var(--warn);
-  color: var(--warn);
-}
-.btn-warn:hover {
-  background: rgba(255,170,0,0.2);
-  box-shadow: 0 0 10px rgba(255,170,0,0.3);
-}
-
-.btn-sm {
-  padding: 5px 8px;
-  font-size: 10px;
-  letter-spacing: 1px;
-}
+.btn-primary  { background: rgba(0,212,255,0.1);  border-color: var(--accent);    color: var(--accent); }
+.btn-primary:hover  { background: rgba(0,212,255,0.22); box-shadow: var(--glow); }
+.btn-success  { background: rgba(0,255,157,0.1);  border-color: var(--accent2);   color: var(--accent2); }
+.btn-success:hover  { background: rgba(0,255,157,0.2);  box-shadow: var(--glow2); }
+.btn-danger   { background: rgba(255,59,59,0.1);  border-color: var(--danger);    color: var(--danger); }
+.btn-danger:hover   { background: rgba(255,59,59,0.2);  box-shadow: 0 0 10px rgba(255,59,59,0.3); }
+.btn-muted    { background: rgba(74,122,150,0.1); border-color: var(--text-dim);  color: var(--text-dim); }
+.btn-muted:hover    { background: rgba(74,122,150,0.2); color: var(--text); }
+.btn-warn     { background: rgba(255,170,0,0.1);  border-color: var(--warn);      color: var(--warn); }
+.btn-warn:hover     { background: rgba(255,170,0,0.2);  box-shadow: 0 0 10px rgba(255,170,0,0.3); }
+.btn-sm { padding: 5px 8px; font-size: 10px; letter-spacing: 1px; }
 
 /* ─── WAYPOINT LIST ─── */
-#list {
-  max-height: 260px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
+#list { max-height: 260px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 
 .wp-item {
-  border: 1px solid transparent;
-  border-left: 3px solid var(--text-dim);
-  padding: 8px 10px;
-  margin-bottom: 5px;
-  background: rgba(0,0,0,0.3);
-  border-radius: 2px;
-  transition: all 0.15s;
+  border: 1px solid transparent; border-left: 3px solid var(--text-dim);
+  padding: 8px 10px; margin-bottom: 5px;
+  background: rgba(0,0,0,0.3); border-radius: 2px; transition: all 0.15s;
 }
-.wp-item:hover {
-  border-color: var(--border);
-  border-left-color: var(--accent);
-}
-.wp-item.selected {
-  border-left-color: var(--accent2);
-  background: rgba(0,255,157,0.05);
-}
-
-.wp-name {
-  font-family: 'Exo 2', sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--text);
-  letter-spacing: 1px;
-  margin-bottom: 3px;
-}
-
-.wp-coords {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-}
-
-.wp-actions {
-  display: flex;
-  gap: 5px;
-}
+.wp-item:hover { border-color: var(--border); border-left-color: var(--accent); }
+.wp-item.selected { border-left-color: var(--accent2); background: rgba(0,255,157,0.05); }
+.wp-name { font-family: 'Exo 2', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 1px; margin-bottom: 3px; }
+.wp-coords { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 6px; }
+.wp-actions { display: flex; gap: 5px; }
 
 /* ─── ROUTE SUMMARY ─── */
 #routeSummary {
-  background: rgba(0,0,0,0.4);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 10px;
-  max-height: 200px;
-  overflow-y: auto;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: var(--text);
-  line-height: 1.8;
+  background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 2px;
+  padding: 10px; max-height: 200px; overflow-y: auto;
+  font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text); line-height: 1.8;
 }
-
-.route-leg {
-  border-bottom: 1px solid rgba(13,79,110,0.4);
-  padding-bottom: 4px;
-  margin-bottom: 4px;
-}
+.route-leg { border-bottom: 1px solid rgba(13,79,110,0.4); padding-bottom: 4px; margin-bottom: 4px; }
 .route-leg:last-child { border-bottom: none; }
-
-.route-total {
-  color: var(--accent2);
-  font-weight: bold;
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px solid var(--accent);
-}
+.route-total { color: var(--accent2); font-weight: bold; margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--accent); }
 
 /* ─── STATUS BAR ─── */
 #statusbar {
-  background: var(--panel);
-  border-top: 1px solid var(--border);
-  height: 32px;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  gap: 24px;
-  flex-shrink: 0;
+  background: var(--panel); border-top: 1px solid var(--border);
+  height: 32px; display: flex; align-items: center;
+  padding: 0 16px; gap: 24px; flex-shrink: 0; position: relative;
 }
-
 #statusbar::before {
-  content: '';
-  position: absolute;
-  top: -1px; left: 0; right: 0;
-  height: 1px;
+  content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
-#statusbar { position: relative; }
-
 .status-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display: flex; align-items: center; gap: 6px;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-size: 10px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase;
 }
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent2);
-  animation: blink 2s infinite;
-}
-.status-dot.warn { background: var(--warn); }
-.status-dot.red { background: var(--danger); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.divider { height: 14px; width: 1px; background: var(--border); }
 
-@keyframes blink {
-  0%,100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-.divider {
-  height: 14px;
-  width: 1px;
-  background: var(--border);
-}
-
-/* ─── SPEED INPUT INLINE ─── */
-.speed-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
+.speed-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 #speedInput { width: 90px; flex-shrink: 0; }
 
-/* ─── LEAFLET OVERRIDES ─── */
-.leaflet-control-zoom a {
-  background: var(--panel2) !important;
-  color: var(--accent) !important;
-  border-color: var(--border) !important;
-}
-.leaflet-control-zoom a:hover {
-  background: var(--panel) !important;
-  color: var(--accent2) !important;
-}
-
-.leaflet-popup-content-wrapper {
-  background: var(--panel2) !important;
-  border: 1px solid var(--border) !important;
-  color: var(--text) !important;
-  font-family: 'Share Tech Mono', monospace !important;
-  font-size: 12px !important;
-  border-radius: 2px !important;
-  box-shadow: var(--glow) !important;
-}
-.leaflet-popup-tip {
-  background: var(--border) !important;
-}
-.leaflet-popup-content a {
-  color: var(--accent2) !important;
-}
-.leaflet-tooltip {
-  background: rgba(5,10,15,0.9) !important;
-  border: 1px solid var(--accent) !important;
-  color: var(--accent2) !important;
-  font-family: 'Share Tech Mono', monospace !important;
-  font-size: 10px !important;
-  border-radius: 2px !important;
-  box-shadow: var(--glow) !important;
-}
-
-/* Animated scanning line on map */
-@keyframes scan {
-  0% { top: 0; }
-  100% { top: 100%; }
-}
-
-.scan-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.3), transparent);
-  z-index: 998;
-  pointer-events: none;
-  animation: scan 8s linear infinite;
-}
-
-/* ─── WAYPOINT COUNT BADGE ─── */
+/* ─── MISC ─── */
 .count-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,212,255,0.15);
-  border: 1px solid rgba(0,212,255,0.4);
-  color: var(--accent);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  min-width: 20px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 2px;
-  margin-left: auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4);
+  color: var(--accent); font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; min-width: 20px; height: 18px; padding: 0 5px;
+  border-radius: 2px; margin-left: auto;
+}
+.empty-state {
+  text-align: center; padding: 20px;
+  font-family: 'Share Tech Mono', monospace; font-size: 11px;
+  color: var(--text-dim); letter-spacing: 1px;
+  border: 1px dashed rgba(13,79,110,0.4); border-radius: 2px; margin: 6px 0;
 }
 
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 20px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  border: 1px dashed rgba(13,79,110,0.4);
-  border-radius: 2px;
-  margin: 6px 0;
-}
+/* ─── LEAFLET OVERRIDES ─── */
+.leaflet-control-zoom a { background: var(--panel2) !important; color: var(--accent) !important; border-color: var(--border) !important; }
+.leaflet-control-zoom a:hover { background: var(--panel) !important; color: var(--accent2) !important; }
+.leaflet-popup-content-wrapper { background: var(--panel2) !important; border: 1px solid var(--border) !important; color: var(--text) !important; font-family: 'Share Tech Mono', monospace !important; font-size: 12px !important; border-radius: 2px !important; box-shadow: var(--glow) !important; }
+.leaflet-popup-tip { background: var(--border) !important; }
+.leaflet-popup-content a { color: var(--accent2) !important; }
+.leaflet-tooltip { background: rgba(5,10,15,0.9) !important; border: 1px solid var(--accent) !important; color: var(--accent2) !important; font-family: 'Share Tech Mono', monospace !important; font-size: 10px !important; border-radius: 2px !important; box-shadow: var(--glow) !important; }
 </style>
 </head>
 <body>
@@ -633,21 +307,13 @@ textarea {
 <!-- ─── MAIN ─── -->
 <div id="main">
 
-  <!-- MAP -->
-  <div id="map">
-    <div class="map-corner tl"></div>
-    <div class="map-corner tr"></div>
-    <div class="map-corner bl"></div>
-    <div class="map-corner br"></div>
-    <div class="scan-line"></div>
-    <div id="coords-overlay">▶ CLICK MAP TO READ COORDINATES</div>
-  </div>
+  <!-- MAP — clean, no overlays, no animations on the map itself -->
+  <div id="map"></div>
 
   <!-- SIDEBAR -->
   <div id="sidebar">
     <div class="sidebar-scroll">
 
-      <!-- JUMP TO LOCATION -->
       <div class="ops-panel">
         <div class="ops-panel-header">
           <span class="icon">📍</span>
@@ -664,13 +330,10 @@ textarea {
             <input id="lonDeg" placeholder="Degrees" type="number" style="flex:1"/>
             <input id="lonMin" placeholder="Minutes" type="number" step="0.001" style="flex:1"/>
           </div>
-          <a id="goBtn" class="btn btn-primary" style="width:100%; margin-top:2px;">
-            ➤ &nbsp; GO / ADD WAYPOINT
-          </a>
+          <a id="goBtn" class="btn btn-primary" style="width:100%; margin-top:2px;">➤ &nbsp; GO / ADD WAYPOINT</a>
         </div>
       </div>
 
-      <!-- ROUTE PLANNING -->
       <div class="ops-panel">
         <div class="ops-panel-header">
           <span class="icon">✈️</span>
@@ -689,7 +352,6 @@ textarea {
         </div>
       </div>
 
-      <!-- WAYPOINTS LIST -->
       <div class="ops-panel">
         <div class="ops-panel-header">
           <span class="icon">📋</span>
@@ -701,7 +363,6 @@ textarea {
         </div>
       </div>
 
-      <!-- ROUTE SUMMARY -->
       <div class="ops-panel" id="summaryPanel" style="display:none;">
         <div class="ops-panel-header">
           <span class="icon">📊</span>
@@ -712,7 +373,6 @@ textarea {
         </div>
       </div>
 
-      <!-- IMPORT / EXPORT -->
       <div class="ops-panel">
         <div class="ops-panel-header">
           <span class="icon">💾</span>
@@ -728,10 +388,10 @@ textarea {
         </div>
       </div>
 
-    </div><!-- /sidebar-scroll -->
-  </div><!-- /sidebar -->
+    </div>
+  </div>
 
-</div><!-- /main -->
+</div>
 
 <!-- ─── STATUS BAR ─── -->
 <div id="statusbar">
@@ -739,25 +399,26 @@ textarea {
   <div class="divider"></div>
   <div class="status-item"><span class="status-dot"></span>MAP TILES LOADED</div>
   <div class="divider"></div>
-  <div class="status-item" id="statusCoords" style="color:var(--text-dim);">CURSOR: -- --</div>
+  <div class="status-item" id="statusCoords">CURSOR: -- / --</div>
   <div class="divider"></div>
   <div class="status-item" id="statusMsg" style="color:var(--accent2);">READY</div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ─── CLOCK ───
+// ─── CLOCK (Zulu) ───
 function updateClock() {
   const now = new Date();
   const z = n => String(n).padStart(2,'0');
-  document.getElementById('clock').textContent = `${z(now.getUTCHours())}:${z(now.getUTCMinutes())}:${z(now.getUTCSeconds())} Z`;
+  document.getElementById('clock').textContent =
+    `${z(now.getUTCHours())}:${z(now.getUTCMinutes())}:${z(now.getUTCSeconds())} Z`;
 }
 updateClock();
 setInterval(updateClock, 1000);
 
-// ─── MAP INIT ───
+// ─── MAP ───
 const allBounds = [[20.00, 88.00],[27.00, 93.00]];
-const map = L.map('map', { minZoom:2, maxZoom:18, zoomControl:true }).fitBounds(allBounds);
+const map = L.map('map', { minZoom:2, maxZoom:18 }).fitBounds(allBounds);
 
 L.imageOverlay('map.png',    [[21.00, 89.00],[24.00, 92.00]]).addTo(map);
 L.imageOverlay('one.jpg',    [[20.00, 89.00],[22.00, 92.00]]).addTo(map);
@@ -773,21 +434,15 @@ L.imageOverlay('ten.jpg',    [[22.00, 88.00],[24.00, 89.00]]).addTo(map);
 L.imageOverlay('eleven.jpg', [[20.00, 88.00],[22.00, 89.00]]).addTo(map);
 
 // ─── STATE ───
-let waypoints = [];
-let markers = {};
-let selected = [];
-let routeLayer = null;
-let checkpointMarkers = [];
+let waypoints = [], markers = {}, selected = [], routeLayer = null, checkpointMarkers = [];
 
-// ─── COORDINATE HELPERS ───
+// ─── COORD HELPERS ───
 function decimalToDMS(decimal) {
   const abs = Math.abs(decimal);
-  const degrees = Math.floor(abs);
-  const minutes = (abs - degrees) * 60;
-  return { degrees, minutes };
+  return { degrees: Math.floor(abs), minutes: (abs - Math.floor(abs)) * 60 };
 }
 function dmsToDecimal(degrees, minutes) {
-  const dec = Math.abs(degrees) + (minutes / 60);
+  const dec = Math.abs(degrees) + minutes / 60;
   return degrees < 0 ? -dec : dec;
 }
 function formatCoord(decimal, isLat) {
@@ -796,18 +451,13 @@ function formatCoord(decimal, isLat) {
   return `${degrees}° ${minutes.toFixed(3)}' ${dir}`;
 }
 
-// ─── UPDATE TOPBAR STATS ───
+// ─── UI HELPERS ───
 function updateStats() {
-  const wc = String(waypoints.length).padStart(3,'0');
-  const sc = String(selected.length).padStart(3,'0');
-  document.getElementById('wpCount').textContent = wc;
-  document.getElementById('selCount').textContent = sc;
+  document.getElementById('wpCount').textContent = String(waypoints.length).padStart(3,'0');
+  document.getElementById('selCount').textContent = String(selected.length).padStart(3,'0');
   document.getElementById('wpBadge').textContent = waypoints.length;
 }
-
-function setStatus(msg) {
-  document.getElementById('statusMsg').textContent = msg;
-}
+function setStatus(msg) { document.getElementById('statusMsg').textContent = msg; }
 
 // ─── RENDER LIST ───
 function renderList() {
@@ -818,38 +468,35 @@ function renderList() {
     updateStats(); return;
   }
   waypoints.forEach(w => {
-    const isSelected = selected.includes(w.id);
-    const selIdx = isSelected ? selected.indexOf(w.id) + 1 : null;
+    const isSel = selected.includes(w.id);
+    const selIdx = isSel ? selected.indexOf(w.id) + 1 : null;
     const div = document.createElement('div');
-    div.className = 'wp-item' + (isSelected ? ' selected' : '');
+    div.className = 'wp-item' + (isSel ? ' selected' : '');
     div.innerHTML = `
-      <div class="wp-name">${isSelected ? `<span style="color:var(--accent2)">[${selIdx}]</span> ` : ''}${w.name}</div>
+      <div class="wp-name">${isSel ? `<span style="color:var(--accent2)">[${selIdx}]</span> ` : ''}${w.name}</div>
       <div class="wp-coords">${formatCoord(w.lat,true)} &nbsp;/&nbsp; ${formatCoord(w.lon,false)}</div>
       <div class="wp-actions">
         <a class="btn btn-muted btn-sm" onclick="editWaypoint(${w.id})">✏ EDIT</a>
         <a class="btn btn-danger btn-sm" onclick="deleteWaypoint(${w.id})">✕ DEL</a>
-        <a class="btn ${isSelected ? 'btn-success' : 'btn-primary'} btn-sm" onclick="selectWaypoint(${w.id})">${isSelected ? '✔ DESEL' : '◎ SELECT'}</a>
+        <a class="btn ${isSel ? 'btn-success' : 'btn-primary'} btn-sm" onclick="selectWaypoint(${w.id})">${isSel ? '✔ DESEL' : '◎ SELECT'}</a>
       </div>`;
     listDiv.appendChild(div);
   });
   updateStats();
 }
 
-// ─── ADD WAYPOINT ───
+// ─── ADD ───
 function addWaypoint(lat, lon, name) {
   const id = Date.now() + Math.floor(Math.random() * 999);
   const wp = { id, lat, lon, name: name || ('WP-' + (waypoints.length + 1)) };
   waypoints.push(wp);
-
   const marker = L.circleMarker([lat, lon], {
     radius: 7, color: '#00d4ff', fillColor: '#00d4ff', fillOpacity: 0.85, weight: 2
   }).addTo(map)
     .bindPopup(`<b style="color:#00d4ff">${wp.name}</b><br>${formatCoord(lat,true)}<br>${formatCoord(lon,false)}<br><a href="#" onclick="editWaypoint(${wp.id})">Edit</a>`);
-
   marker.on('click', () => selectWaypoint(wp.id));
   markers[id] = marker;
-  renderList();
-  saveLocal();
+  renderList(); saveLocal();
   setStatus(`WAYPOINT ADDED: ${wp.name}`);
 }
 
@@ -858,7 +505,7 @@ function editWaypoint(id) {
   const wp = waypoints.find(w => w.id === id);
   if (!wp) return;
   const newName = prompt('Rename waypoint:', wp.name);
-  if (newName !== null && newName.trim() !== '') { wp.name = newName.trim(); }
+  if (newName !== null && newName.trim() !== '') wp.name = newName.trim();
   const newLat = prompt('Change latitude (decimal):', wp.lat);
   const newLon = prompt('Change longitude (decimal):', wp.lon);
   if (newLat && newLon && !isNaN(newLat) && !isNaN(newLon)) {
@@ -873,27 +520,21 @@ function editWaypoint(id) {
 // ─── DELETE ───
 function deleteWaypoint(id) {
   if (!confirm('Delete this waypoint?')) return;
-  const wp = waypoints.find(w => w.id === id);
   waypoints = waypoints.filter(w => w.id !== id);
-  map.removeLayer(markers[id]);
-  delete markers[id];
+  map.removeLayer(markers[id]); delete markers[id];
   selected = selected.filter(s => s !== id);
   renderList(); saveLocal();
-  setStatus(`WAYPOINT DELETED`);
+  setStatus('WAYPOINT DELETED');
 }
 
 // ─── SELECT ───
 function selectWaypoint(id) {
   const idx = selected.indexOf(id);
-  if (idx === -1) selected.push(id);
-  else selected.splice(idx, 1);
+  if (idx === -1) selected.push(id); else selected.splice(idx, 1);
   Object.keys(markers).forEach(k => {
-    const mk = markers[k];
-    if (selected.includes(Number(k))) {
-      mk.setStyle({ color: '#00ff9d', fillColor: '#00ff9d' });
-    } else {
-      mk.setStyle({ color: '#00d4ff', fillColor: '#00d4ff' });
-    }
+    markers[k].setStyle(selected.includes(Number(k))
+      ? { color: '#00ff9d', fillColor: '#00ff9d' }
+      : { color: '#00d4ff', fillColor: '#00d4ff' });
   });
   renderList();
   setStatus(`${selected.length} WAYPOINT(S) SELECTED`);
@@ -902,8 +543,7 @@ function selectWaypoint(id) {
 // ─── DISTANCE / BEARING ───
 function haversineNM(lat1, lon1, lat2, lon2) {
   const R = 6371e3, r = v => v * Math.PI / 180;
-  const φ1=r(lat1), φ2=r(lat2), Δφ=r(lat2-lat1), Δλ=r(lon2-lon1);
-  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+  const a = Math.sin(r(lat2-lat1)/2)**2 + Math.cos(r(lat1))*Math.cos(r(lat2))*Math.sin(r(lon2-lon1)/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) / 1852;
 }
 function bearing(lat1, lon1, lat2, lon2) {
@@ -944,19 +584,14 @@ function makeRoute() {
   document.getElementById('routeSummary').innerHTML = html;
   document.getElementById('summaryPanel').style.display = '';
   document.getElementById('totalDistDisplay').textContent = totalDist.toFixed(1) + ' NM';
-
   routeLayer.on('click', e => addCheckpoint(e.latlng));
   setStatus(`ROUTE COMPUTED: ${totalDist.toFixed(2)} NM, ${totalTime.toFixed(0)} MIN`);
 }
 
 function addCheckpoint(latlng) {
-  let prevLatLng = selected.length > 0
-    ? waypoints.find(w => w.id === selected[0])
-    : map.getCenter();
-  if (checkpointMarkers.length > 0) {
-    prevLatLng = checkpointMarkers[checkpointMarkers.length - 1].getLatLng();
-  }
-  const dist = haversineNM(prevLatLng.lat, prevLatLng.lng, latlng.lat, latlng.lng);
+  let prev = selected.length > 0 ? waypoints.find(w => w.id === selected[0]) : map.getCenter();
+  if (checkpointMarkers.length > 0) prev = checkpointMarkers[checkpointMarkers.length - 1].getLatLng();
+  const dist = haversineNM(prev.lat, prev.lng, latlng.lat, latlng.lng);
   const speed = parseFloat(document.getElementById('speedInput').value) || 0;
   const eta = speed > 0 ? (dist / speed * 60).toFixed(1) + ' MIN' : 'N/A';
   const cp = L.circleMarker([latlng.lat, latlng.lng], {
@@ -987,25 +622,17 @@ function saveLocal() { localStorage.setItem('bnav_waypoints_v1', JSON.stringify(
 function loadLocal() {
   const data = localStorage.getItem('bnav_waypoints_v1');
   if (!data) return;
-  try { JSON.parse(data).forEach(w => addWaypoint(w.lat, w.lon, w.name)); }
-  catch(e) { console.error(e); }
+  try { JSON.parse(data).forEach(w => addWaypoint(w.lat, w.lon, w.name)); } catch(e) { console.error(e); }
 }
 
 // ─── MAP EVENTS ───
-map.on('click', e => {
-  const latStr = formatCoord(e.latlng.lat, true);
-  const lonStr = formatCoord(e.latlng.lng, false);
-  document.getElementById('coords-overlay').textContent = `▶ ${latStr}  /  ${lonStr}`;
-  addWaypoint(e.latlng.lat, e.latlng.lng);
-});
-
+map.on('click', e => addWaypoint(e.latlng.lat, e.latlng.lng));
 map.on('mousemove', e => {
-  const latStr = formatCoord(e.latlng.lat, true);
-  const lonStr = formatCoord(e.latlng.lng, false);
-  document.getElementById('statusCoords').textContent = `CURSOR: ${latStr} / ${lonStr}`;
+  document.getElementById('statusCoords').textContent =
+    `CURSOR: ${formatCoord(e.latlng.lat,true)} / ${formatCoord(e.latlng.lng,false)}`;
 });
 
-// ─── BUTTON EVENTS ───
+// ─── BUTTONS ───
 document.getElementById('goBtn').onclick = () => {
   const latDeg = parseFloat(document.getElementById('latDeg').value);
   const latMin = parseFloat(document.getElementById('latMin').value);
@@ -1021,21 +648,13 @@ document.getElementById('goBtn').onclick = () => {
 
 document.getElementById('routeBtn').onclick = makeRoute;
 document.getElementById('clearRouteBtn').onclick = clearRoute;
-
-document.getElementById('saveBtn').onclick = () => {
-  saveLocal();
-  setStatus('WAYPOINTS SAVED TO LOCAL STORAGE');
-};
-
+document.getElementById('saveBtn').onclick = () => { saveLocal(); setStatus('WAYPOINTS SAVED TO LOCAL STORAGE'); };
 document.getElementById('exportBtn').onclick = () => {
   const blob = new Blob([JSON.stringify(waypoints, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'waypoints_bnav.json';
-  a.click();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'waypoints_bnav.json'; a.click();
   setStatus('DATA EXPORTED');
 };
-
 document.getElementById('importBtn').onclick = () => {
   try {
     const arr = JSON.parse(document.getElementById('jsonArea').value);
