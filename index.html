@@ -1,0 +1,1053 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>NAVAL AVIATION | WAYPOINTS PRO | OPS ROOM</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050a0f;
+  --panel: #070d14;
+  --panel2: #0a1520;
+  --border: #0d4f6e;
+  --accent: #00d4ff;
+  --accent2: #00ff9d;
+  --danger: #ff3b3b;
+  --warn: #ffaa00;
+  --text: #c8e8f5;
+  --text-dim: #4a7a96;
+  --glow: 0 0 12px rgba(0,212,255,0.4);
+  --glow2: 0 0 12px rgba(0,255,157,0.4);
+  --scanline: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── TOP BAR ─── */
+#topbar {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  flex-shrink: 0;
+  position: relative;
+}
+#topbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.tb-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tb-emblem {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: var(--glow);
+  animation: pulse-ring 3s infinite;
+}
+
+@keyframes pulse-ring {
+  0%,100% { box-shadow: var(--glow); }
+  50% { box-shadow: 0 0 20px rgba(0,212,255,0.7); }
+}
+
+.tb-title {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(0,212,255,0.5);
+}
+.tb-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+.tb-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.tb-stat {
+  text-align: right;
+}
+.tb-stat-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.tb-stat-val {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  color: var(--accent2);
+  text-shadow: var(--glow2);
+}
+
+#clock {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 28px;
+  color: var(--accent);
+  text-shadow: var(--glow);
+  letter-spacing: 4px;
+  min-width: 140px;
+  text-align: center;
+}
+
+.credit-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--warn);
+  background: rgba(255,170,0,0.08);
+  border: 1px solid rgba(255,170,0,0.3);
+  padding: 4px 10px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+}
+
+/* ─── MAIN LAYOUT ─── */
+#main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ─── MAP ─── */
+#map {
+  flex: 1;
+  position: relative;
+  border-right: 1px solid var(--border);
+}
+
+#map::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--scanline);
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Corner decorations on map */
+.map-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  z-index: 1000;
+  pointer-events: none;
+}
+.map-corner.tl { top: 8px; left: 8px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+.map-corner.tr { top: 8px; right: 8px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+.map-corner.bl { bottom: 8px; left: 8px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+.map-corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+
+#coords-overlay {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: rgba(5,10,15,0.85);
+  border: 1px solid var(--border);
+  padding: 6px 18px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  color: var(--accent2);
+  letter-spacing: 2px;
+  pointer-events: none;
+  border-radius: 2px;
+  text-shadow: var(--glow2);
+  min-width: 300px;
+  text-align: center;
+}
+
+/* ─── SIDEBAR ─── */
+#sidebar {
+  width: 380px;
+  flex-shrink: 0;
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--panel);
+}
+
+.sidebar-scroll::-webkit-scrollbar { width: 4px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: var(--panel); }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* ─── SECTION PANELS ─── */
+.ops-panel {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.ops-panel-header {
+  background: rgba(13,79,110,0.4);
+  border-bottom: 1px solid var(--border);
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ops-panel-header .icon { font-size: 13px; }
+
+.ops-panel-title {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-shadow: 0 0 6px rgba(0,212,255,0.4);
+}
+
+.ops-panel-body {
+  padding: 10px;
+}
+
+/* ─── INPUTS ─── */
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.field-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  min-width: 28px;
+  text-transform: uppercase;
+}
+
+input[type=text], input[type=number], textarea {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  color: var(--accent2);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  padding: 7px 10px;
+  border-radius: 2px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type=text]:focus, input[type=number]:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(0,212,255,0.2);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* ─── BUTTONS ─── */
+.btn-grid {
+  display: grid;
+  gap: 6px;
+}
+.btn-grid-2 { grid-template-columns: 1fr 1fr; }
+.btn-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: rgba(0,212,255,0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.btn-primary:hover {
+  background: rgba(0,212,255,0.22);
+  box-shadow: var(--glow);
+}
+
+.btn-success {
+  background: rgba(0,255,157,0.1);
+  border-color: var(--accent2);
+  color: var(--accent2);
+}
+.btn-success:hover {
+  background: rgba(0,255,157,0.2);
+  box-shadow: var(--glow2);
+}
+
+.btn-danger {
+  background: rgba(255,59,59,0.1);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.btn-danger:hover {
+  background: rgba(255,59,59,0.2);
+  box-shadow: 0 0 10px rgba(255,59,59,0.3);
+}
+
+.btn-muted {
+  background: rgba(74,122,150,0.1);
+  border-color: var(--text-dim);
+  color: var(--text-dim);
+}
+.btn-muted:hover {
+  background: rgba(74,122,150,0.2);
+  color: var(--text);
+}
+
+.btn-warn {
+  background: rgba(255,170,0,0.1);
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.btn-warn:hover {
+  background: rgba(255,170,0,0.2);
+  box-shadow: 0 0 10px rgba(255,170,0,0.3);
+}
+
+.btn-sm {
+  padding: 5px 8px;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+/* ─── WAYPOINT LIST ─── */
+#list {
+  max-height: 260px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.wp-item {
+  border: 1px solid transparent;
+  border-left: 3px solid var(--text-dim);
+  padding: 8px 10px;
+  margin-bottom: 5px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 2px;
+  transition: all 0.15s;
+}
+.wp-item:hover {
+  border-color: var(--border);
+  border-left-color: var(--accent);
+}
+.wp-item.selected {
+  border-left-color: var(--accent2);
+  background: rgba(0,255,157,0.05);
+}
+
+.wp-name {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+}
+
+.wp-coords {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.wp-actions {
+  display: flex;
+  gap: 5px;
+}
+
+/* ─── ROUTE SUMMARY ─── */
+#routeSummary {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.8;
+}
+
+.route-leg {
+  border-bottom: 1px solid rgba(13,79,110,0.4);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+}
+.route-leg:last-child { border-bottom: none; }
+
+.route-total {
+  color: var(--accent2);
+  font-weight: bold;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--accent);
+}
+
+/* ─── STATUS BAR ─── */
+#statusbar {
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  height: 32px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+#statusbar::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+#statusbar { position: relative; }
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent2);
+  animation: blink 2s infinite;
+}
+.status-dot.warn { background: var(--warn); }
+.status-dot.red { background: var(--danger); }
+
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.divider {
+  height: 14px;
+  width: 1px;
+  background: var(--border);
+}
+
+/* ─── SPEED INPUT INLINE ─── */
+.speed-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+#speedInput { width: 90px; flex-shrink: 0; }
+
+/* ─── LEAFLET OVERRIDES ─── */
+.leaflet-control-zoom a {
+  background: var(--panel2) !important;
+  color: var(--accent) !important;
+  border-color: var(--border) !important;
+}
+.leaflet-control-zoom a:hover {
+  background: var(--panel) !important;
+  color: var(--accent2) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--panel2) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 12px !important;
+  border-radius: 2px !important;
+  box-shadow: var(--glow) !important;
+}
+.leaflet-popup-tip {
+  background: var(--border) !important;
+}
+.leaflet-popup-content a {
+  color: var(--accent2) !important;
+}
+.leaflet-tooltip {
+  background: rgba(5,10,15,0.9) !important;
+  border: 1px solid var(--accent) !important;
+  color: var(--accent2) !important;
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 10px !important;
+  border-radius: 2px !important;
+  box-shadow: var(--glow) !important;
+}
+
+/* Animated scanning line on map */
+@keyframes scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.3), transparent);
+  z-index: 998;
+  pointer-events: none;
+  animation: scan 8s linear infinite;
+}
+
+/* ─── WAYPOINT COUNT BADGE ─── */
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,212,255,0.15);
+  border: 1px solid rgba(0,212,255,0.4);
+  color: var(--accent);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 2px;
+  margin-left: auto;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  border: 1px dashed rgba(13,79,110,0.4);
+  border-radius: 2px;
+  margin: 6px 0;
+}
+</style>
+</head>
+<body>
+
+<!-- ─── TOP BAR ─── -->
+<div id="topbar">
+  <div class="tb-left">
+    <div class="tb-emblem">⚓</div>
+    <div>
+      <div class="tb-title">Bangladesh Navy · Waypoints Pro</div>
+      <div class="tb-subtitle">NAVAL AVIATION OPERATIONS SYSTEM · CLASSIFIED</div>
+    </div>
+  </div>
+  <div class="tb-right">
+    <div class="tb-stat">
+      <div class="tb-stat-label">Waypoints</div>
+      <div class="tb-stat-val" id="wpCount">000</div>
+    </div>
+    <div class="tb-stat">
+      <div class="tb-stat-label">Selected</div>
+      <div class="tb-stat-val" id="selCount">000</div>
+    </div>
+    <div class="tb-stat">
+      <div class="tb-stat-label">Total Dist</div>
+      <div class="tb-stat-val" id="totalDistDisplay">-- NM</div>
+    </div>
+    <div id="clock">--:--:--</div>
+    <div class="credit-badge">LT CDR SADMAN · P/3223</div>
+  </div>
+</div>
+
+<!-- ─── MAIN ─── -->
+<div id="main">
+
+  <!-- MAP -->
+  <div id="map">
+    <div class="map-corner tl"></div>
+    <div class="map-corner tr"></div>
+    <div class="map-corner bl"></div>
+    <div class="map-corner br"></div>
+    <div class="scan-line"></div>
+    <div id="coords-overlay">▶ CLICK MAP TO READ COORDINATES</div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-scroll">
+
+      <!-- JUMP TO LOCATION -->
+      <div class="ops-panel">
+        <div class="ops-panel-header">
+          <span class="icon">📍</span>
+          <span class="ops-panel-title">Jump To Location</span>
+        </div>
+        <div class="ops-panel-body">
+          <div class="field-row">
+            <span class="field-label">LAT</span>
+            <input id="latDeg" placeholder="Degrees" type="number" style="flex:1"/>
+            <input id="latMin" placeholder="Minutes" type="number" step="0.001" style="flex:1"/>
+          </div>
+          <div class="field-row">
+            <span class="field-label">LON</span>
+            <input id="lonDeg" placeholder="Degrees" type="number" style="flex:1"/>
+            <input id="lonMin" placeholder="Minutes" type="number" step="0.001" style="flex:1"/>
+          </div>
+          <a id="goBtn" class="btn btn-primary" style="width:100%; margin-top:2px;">
+            ➤ &nbsp; GO / ADD WAYPOINT
+          </a>
+        </div>
+      </div>
+
+      <!-- ROUTE PLANNING -->
+      <div class="ops-panel">
+        <div class="ops-panel-header">
+          <span class="icon">✈️</span>
+          <span class="ops-panel-title">Route Planning</span>
+        </div>
+        <div class="ops-panel-body">
+          <div class="speed-row">
+            <span class="field-label" style="min-width:50px;">SPEED</span>
+            <input id="speedInput" placeholder="Knots" type="text"/>
+            <span class="field-label" style="min-width:30px;">KTS</span>
+          </div>
+          <div class="btn-grid btn-grid-2">
+            <a id="routeBtn" class="btn btn-success">⬡ &nbsp; Route Selected</a>
+            <a id="clearRouteBtn" class="btn btn-danger">✕ &nbsp; Clear Route</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- WAYPOINTS LIST -->
+      <div class="ops-panel">
+        <div class="ops-panel-header">
+          <span class="icon">📋</span>
+          <span class="ops-panel-title">Waypoints</span>
+          <span class="count-badge" id="wpBadge">0</span>
+        </div>
+        <div class="ops-panel-body" style="padding:8px;">
+          <div id="list"></div>
+        </div>
+      </div>
+
+      <!-- ROUTE SUMMARY -->
+      <div class="ops-panel" id="summaryPanel" style="display:none;">
+        <div class="ops-panel-header">
+          <span class="icon">📊</span>
+          <span class="ops-panel-title">Route Analysis</span>
+        </div>
+        <div class="ops-panel-body" style="padding:8px;">
+          <div id="routeSummary"></div>
+        </div>
+      </div>
+
+      <!-- IMPORT / EXPORT -->
+      <div class="ops-panel">
+        <div class="ops-panel-header">
+          <span class="icon">💾</span>
+          <span class="ops-panel-title">Data Operations</span>
+        </div>
+        <div class="ops-panel-body">
+          <div class="btn-grid btn-grid-3" style="margin-bottom:8px;">
+            <a id="saveBtn" class="btn btn-success btn-sm">💾 Save</a>
+            <a id="exportBtn" class="btn btn-muted btn-sm">📥 Export</a>
+            <a id="importBtn" class="btn btn-warn btn-sm">📤 Import</a>
+          </div>
+          <textarea id="jsonArea" rows="3" placeholder="Paste JSON here to import waypoints..."></textarea>
+        </div>
+      </div>
+
+    </div><!-- /sidebar-scroll -->
+  </div><!-- /sidebar -->
+
+</div><!-- /main -->
+
+<!-- ─── STATUS BAR ─── -->
+<div id="statusbar">
+  <div class="status-item"><span class="status-dot"></span>SYS ONLINE</div>
+  <div class="divider"></div>
+  <div class="status-item"><span class="status-dot"></span>MAP TILES LOADED</div>
+  <div class="divider"></div>
+  <div class="status-item" id="statusCoords" style="color:var(--text-dim);">CURSOR: -- --</div>
+  <div class="divider"></div>
+  <div class="status-item" id="statusMsg" style="color:var(--accent2);">READY</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ─── CLOCK ───
+function updateClock() {
+  const now = new Date();
+  const z = n => String(n).padStart(2,'0');
+  document.getElementById('clock').textContent = `${z(now.getUTCHours())}:${z(now.getUTCMinutes())}:${z(now.getUTCSeconds())} Z`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ─── MAP INIT ───
+const allBounds = [[20.00, 88.00],[27.00, 93.00]];
+const map = L.map('map', { minZoom:2, maxZoom:18, zoomControl:true }).fitBounds(allBounds);
+
+L.imageOverlay('map.png',    [[21.00, 89.00],[24.00, 92.00]]).addTo(map);
+L.imageOverlay('one.jpg',    [[20.00, 89.00],[22.00, 92.00]]).addTo(map);
+L.imageOverlay('two.jpg',    [[24.00, 89.00],[25.50, 92.00]]).addTo(map);
+L.imageOverlay('three.jpg',  [[25.50, 89.00],[27.00, 92.00]]).addTo(map);
+L.imageOverlay('four.jpg',   [[25.50, 92.00],[27.00, 93.00]]).addTo(map);
+L.imageOverlay('five.jpg',   [[24.00, 92.00],[25.50, 93.00]]).addTo(map);
+L.imageOverlay('six.jpg',    [[22.00, 92.00],[24.00, 93.00]]).addTo(map);
+L.imageOverlay('seven.jpg',  [[20.00, 92.00],[22.00, 93.00]]).addTo(map);
+L.imageOverlay('eight.jpg',  [[25.50, 88.00],[27.00, 89.00]]).addTo(map);
+L.imageOverlay('nine.jpg',   [[24.00, 88.00],[25.50, 89.00]]).addTo(map);
+L.imageOverlay('ten.jpg',    [[22.00, 88.00],[24.00, 89.00]]).addTo(map);
+L.imageOverlay('eleven.jpg', [[20.00, 88.00],[22.00, 89.00]]).addTo(map);
+
+// ─── STATE ───
+let waypoints = [];
+let markers = {};
+let selected = [];
+let routeLayer = null;
+let checkpointMarkers = [];
+
+// ─── COORDINATE HELPERS ───
+function decimalToDMS(decimal) {
+  const abs = Math.abs(decimal);
+  const degrees = Math.floor(abs);
+  const minutes = (abs - degrees) * 60;
+  return { degrees, minutes };
+}
+function dmsToDecimal(degrees, minutes) {
+  const dec = Math.abs(degrees) + (minutes / 60);
+  return degrees < 0 ? -dec : dec;
+}
+function formatCoord(decimal, isLat) {
+  const { degrees, minutes } = decimalToDMS(decimal);
+  const dir = isLat ? (decimal >= 0 ? 'N' : 'S') : (decimal >= 0 ? 'E' : 'W');
+  return `${degrees}° ${minutes.toFixed(3)}' ${dir}`;
+}
+
+// ─── UPDATE TOPBAR STATS ───
+function updateStats() {
+  const wc = String(waypoints.length).padStart(3,'0');
+  const sc = String(selected.length).padStart(3,'0');
+  document.getElementById('wpCount').textContent = wc;
+  document.getElementById('selCount').textContent = sc;
+  document.getElementById('wpBadge').textContent = waypoints.length;
+}
+
+function setStatus(msg) {
+  document.getElementById('statusMsg').textContent = msg;
+}
+
+// ─── RENDER LIST ───
+function renderList() {
+  const listDiv = document.getElementById('list');
+  listDiv.innerHTML = '';
+  if (waypoints.length === 0) {
+    listDiv.innerHTML = '<div class="empty-state">NO WAYPOINTS LOGGED<br>CLICK MAP TO ADD</div>';
+    updateStats(); return;
+  }
+  waypoints.forEach(w => {
+    const isSelected = selected.includes(w.id);
+    const selIdx = isSelected ? selected.indexOf(w.id) + 1 : null;
+    const div = document.createElement('div');
+    div.className = 'wp-item' + (isSelected ? ' selected' : '');
+    div.innerHTML = `
+      <div class="wp-name">${isSelected ? `<span style="color:var(--accent2)">[${selIdx}]</span> ` : ''}${w.name}</div>
+      <div class="wp-coords">${formatCoord(w.lat,true)} &nbsp;/&nbsp; ${formatCoord(w.lon,false)}</div>
+      <div class="wp-actions">
+        <a class="btn btn-muted btn-sm" onclick="editWaypoint(${w.id})">✏ EDIT</a>
+        <a class="btn btn-danger btn-sm" onclick="deleteWaypoint(${w.id})">✕ DEL</a>
+        <a class="btn ${isSelected ? 'btn-success' : 'btn-primary'} btn-sm" onclick="selectWaypoint(${w.id})">${isSelected ? '✔ DESEL' : '◎ SELECT'}</a>
+      </div>`;
+    listDiv.appendChild(div);
+  });
+  updateStats();
+}
+
+// ─── ADD WAYPOINT ───
+function addWaypoint(lat, lon, name) {
+  const id = Date.now() + Math.floor(Math.random() * 999);
+  const wp = { id, lat, lon, name: name || ('WP-' + (waypoints.length + 1)) };
+  waypoints.push(wp);
+
+  const marker = L.circleMarker([lat, lon], {
+    radius: 7, color: '#00d4ff', fillColor: '#00d4ff', fillOpacity: 0.85, weight: 2
+  }).addTo(map)
+    .bindPopup(`<b style="color:#00d4ff">${wp.name}</b><br>${formatCoord(lat,true)}<br>${formatCoord(lon,false)}<br><a href="#" onclick="editWaypoint(${wp.id})">Edit</a>`);
+
+  marker.on('click', () => selectWaypoint(wp.id));
+  markers[id] = marker;
+  renderList();
+  saveLocal();
+  setStatus(`WAYPOINT ADDED: ${wp.name}`);
+}
+
+// ─── EDIT ───
+function editWaypoint(id) {
+  const wp = waypoints.find(w => w.id === id);
+  if (!wp) return;
+  const newName = prompt('Rename waypoint:', wp.name);
+  if (newName !== null && newName.trim() !== '') { wp.name = newName.trim(); }
+  const newLat = prompt('Change latitude (decimal):', wp.lat);
+  const newLon = prompt('Change longitude (decimal):', wp.lon);
+  if (newLat && newLon && !isNaN(newLat) && !isNaN(newLon)) {
+    wp.lat = parseFloat(newLat); wp.lon = parseFloat(newLon);
+    markers[id].setLatLng([wp.lat, wp.lon])
+      .bindPopup(`<b style="color:#00d4ff">${wp.name}</b><br>${formatCoord(wp.lat,true)}<br>${formatCoord(wp.lon,false)}<br><a href="#" onclick="editWaypoint(${wp.id})">Edit</a>`);
+  }
+  renderList(); saveLocal();
+  setStatus(`WAYPOINT EDITED: ${wp.name}`);
+}
+
+// ─── DELETE ───
+function deleteWaypoint(id) {
+  if (!confirm('Delete this waypoint?')) return;
+  const wp = waypoints.find(w => w.id === id);
+  waypoints = waypoints.filter(w => w.id !== id);
+  map.removeLayer(markers[id]);
+  delete markers[id];
+  selected = selected.filter(s => s !== id);
+  renderList(); saveLocal();
+  setStatus(`WAYPOINT DELETED`);
+}
+
+// ─── SELECT ───
+function selectWaypoint(id) {
+  const idx = selected.indexOf(id);
+  if (idx === -1) selected.push(id);
+  else selected.splice(idx, 1);
+  Object.keys(markers).forEach(k => {
+    const mk = markers[k];
+    if (selected.includes(Number(k))) {
+      mk.setStyle({ color: '#00ff9d', fillColor: '#00ff9d' });
+    } else {
+      mk.setStyle({ color: '#00d4ff', fillColor: '#00d4ff' });
+    }
+  });
+  renderList();
+  setStatus(`${selected.length} WAYPOINT(S) SELECTED`);
+}
+
+// ─── DISTANCE / BEARING ───
+function haversineNM(lat1, lon1, lat2, lon2) {
+  const R = 6371e3, r = v => v * Math.PI / 180;
+  const φ1=r(lat1), φ2=r(lat2), Δφ=r(lat2-lat1), Δλ=r(lon2-lon1);
+  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) / 1852;
+}
+function bearing(lat1, lon1, lat2, lon2) {
+  const r = v => v * Math.PI / 180, d = v => v * 180 / Math.PI;
+  const y = Math.sin(r(lon2-lon1)) * Math.cos(r(lat2));
+  const x = Math.cos(r(lat1))*Math.sin(r(lat2)) - Math.sin(r(lat1))*Math.cos(r(lat2))*Math.cos(r(lon2-lon1));
+  return (d(Math.atan2(y,x)) + 360) % 360;
+}
+
+// ─── ROUTE ───
+function makeRoute() {
+  if (selected.length < 2) { alert('Select at least 2 waypoints'); return; }
+  if (routeLayer) map.removeLayer(routeLayer);
+  checkpointMarkers.forEach(cp => map.removeLayer(cp));
+  checkpointMarkers = [];
+
+  const latlngs = selected.map(id => { const w = waypoints.find(wp => wp.id === id); return [w.lat, w.lon]; });
+  routeLayer = L.polyline(latlngs, { color: '#00ff9d', weight: 2, opacity: 0.9 }).addTo(map);
+
+  let totalDist = 0, totalTime = 0;
+  const speed = parseFloat(document.getElementById('speedInput').value) || 0;
+  let html = '';
+
+  for (let i = 0; i < selected.length - 1; i++) {
+    const a = waypoints.find(w => w.id === selected[i]);
+    const b = waypoints.find(w => w.id === selected[i+1]);
+    const dist = haversineNM(a.lat, a.lon, b.lat, b.lon);
+    totalDist += dist;
+    const time = speed > 0 ? dist / speed * 60 : 0;
+    totalTime += time;
+    const brg = bearing(a.lat, a.lon, b.lat, b.lon);
+    html += `<div class="route-leg">
+      <span style="color:var(--accent)">${a.name} → ${b.name}</span><br>
+      DIST: ${dist.toFixed(2)} NM &nbsp;|&nbsp; BRG: ${brg.toFixed(1)}° &nbsp;|&nbsp; ETE: ${time.toFixed(1)} MIN
+    </div>`;
+  }
+  html += `<div class="route-total">▶ TOTAL: ${totalDist.toFixed(2)} NM &nbsp;|&nbsp; ETE: ${totalTime.toFixed(1)} MIN @ ${speed||'--'} KTS</div>`;
+  document.getElementById('routeSummary').innerHTML = html;
+  document.getElementById('summaryPanel').style.display = '';
+  document.getElementById('totalDistDisplay').textContent = totalDist.toFixed(1) + ' NM';
+
+  routeLayer.on('click', e => addCheckpoint(e.latlng));
+  setStatus(`ROUTE COMPUTED: ${totalDist.toFixed(2)} NM, ${totalTime.toFixed(0)} MIN`);
+}
+
+function addCheckpoint(latlng) {
+  let prevLatLng = selected.length > 0
+    ? waypoints.find(w => w.id === selected[0])
+    : map.getCenter();
+  if (checkpointMarkers.length > 0) {
+    prevLatLng = checkpointMarkers[checkpointMarkers.length - 1].getLatLng();
+  }
+  const dist = haversineNM(prevLatLng.lat, prevLatLng.lng, latlng.lat, latlng.lng);
+  const speed = parseFloat(document.getElementById('speedInput').value) || 0;
+  const eta = speed > 0 ? (dist / speed * 60).toFixed(1) + ' MIN' : 'N/A';
+  const cp = L.circleMarker([latlng.lat, latlng.lng], {
+    radius: 5, color: '#ffaa00', fillColor: '#ffaa00', fillOpacity: 0.9, weight: 2
+  }).addTo(map)
+    .bindPopup(`CHECKPOINT<br>DIST: ${dist.toFixed(2)} NM<br>ETA: ${eta}`)
+    .openPopup()
+    .bindTooltip(`${dist.toFixed(2)} NM | ${eta}`, { permanent: true, direction: 'top' });
+  checkpointMarkers.push(cp);
+}
+
+function clearRoute() {
+  if (routeLayer) map.removeLayer(routeLayer);
+  routeLayer = null;
+  checkpointMarkers.forEach(cp => map.removeLayer(cp));
+  checkpointMarkers = [];
+  selected = [];
+  document.getElementById('routeSummary').innerHTML = '';
+  document.getElementById('summaryPanel').style.display = 'none';
+  document.getElementById('totalDistDisplay').textContent = '-- NM';
+  Object.values(markers).forEach(m => m.setStyle({ color: '#00d4ff', fillColor: '#00d4ff' }));
+  renderList();
+  setStatus('ROUTE CLEARED');
+}
+
+// ─── STORAGE ───
+function saveLocal() { localStorage.setItem('bnav_waypoints_v1', JSON.stringify(waypoints)); }
+function loadLocal() {
+  const data = localStorage.getItem('bnav_waypoints_v1');
+  if (!data) return;
+  try { JSON.parse(data).forEach(w => addWaypoint(w.lat, w.lon, w.name)); }
+  catch(e) { console.error(e); }
+}
+
+// ─── MAP EVENTS ───
+map.on('click', e => {
+  const latStr = formatCoord(e.latlng.lat, true);
+  const lonStr = formatCoord(e.latlng.lng, false);
+  document.getElementById('coords-overlay').textContent = `▶ ${latStr}  /  ${lonStr}`;
+  addWaypoint(e.latlng.lat, e.latlng.lng);
+});
+
+map.on('mousemove', e => {
+  const latStr = formatCoord(e.latlng.lat, true);
+  const lonStr = formatCoord(e.latlng.lng, false);
+  document.getElementById('statusCoords').textContent = `CURSOR: ${latStr} / ${lonStr}`;
+});
+
+// ─── BUTTON EVENTS ───
+document.getElementById('goBtn').onclick = () => {
+  const latDeg = parseFloat(document.getElementById('latDeg').value);
+  const latMin = parseFloat(document.getElementById('latMin').value);
+  const lonDeg = parseFloat(document.getElementById('lonDeg').value);
+  const lonMin = parseFloat(document.getElementById('lonMin').value);
+  if ([latDeg, latMin, lonDeg, lonMin].some(isNaN)) { alert('Invalid coordinates'); return; }
+  const lat = dmsToDecimal(latDeg, latMin);
+  const lon = dmsToDecimal(lonDeg, lonMin);
+  map.setView([lat, lon], Math.max(map.getZoom(), 12));
+  addWaypoint(lat, lon, 'MANUAL');
+  ['latDeg','latMin','lonDeg','lonMin'].forEach(id => document.getElementById(id).value = '');
+};
+
+document.getElementById('routeBtn').onclick = makeRoute;
+document.getElementById('clearRouteBtn').onclick = clearRoute;
+
+document.getElementById('saveBtn').onclick = () => {
+  saveLocal();
+  setStatus('WAYPOINTS SAVED TO LOCAL STORAGE');
+};
+
+document.getElementById('exportBtn').onclick = () => {
+  const blob = new Blob([JSON.stringify(waypoints, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'waypoints_bnav.json';
+  a.click();
+  setStatus('DATA EXPORTED');
+};
+
+document.getElementById('importBtn').onclick = () => {
+  try {
+    const arr = JSON.parse(document.getElementById('jsonArea').value);
+    arr.forEach(w => addWaypoint(w.lat, w.lon, w.name));
+    document.getElementById('jsonArea').value = '';
+    setStatus(`IMPORTED ${arr.length} WAYPOINTS`);
+  } catch(e) { alert('Invalid JSON format'); }
+};
+
+// ─── INIT ───
+loadLocal();
+setTimeout(() => map.invalidateSize(), 100);
+</script>
+</body>
+</html>
